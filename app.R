@@ -13,8 +13,15 @@ server = (function(input, output, session) {
 
 # Define UI for application
 ui = (dashboardPage(
-  dashboardHeader(),
-  dashboardSidebar(),
+  dashboardHeader(title="Project K"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Home", tabName = "home", icon = icon("home")),
+      menuItem("Kallisto", tabName = "kallisto", icon = icon("arrows")),
+      menuItem("Sleuth", tabName = "sleuth", icon = icon("search")),
+      menuItem("About", tabName = "about", icon = icon("question"))
+    )
+  ),
   dashboardBody()
 
 ))
