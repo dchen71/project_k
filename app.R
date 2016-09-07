@@ -22,7 +22,36 @@ ui = (dashboardPage(
       menuItem("About", tabName = "about", icon = icon("question"))
     )
   ),
-  dashboardBody()
+  dashboardBody(
+    tabItems(
+      # Home page
+      tabItem(tabName = "home",
+              fluidRow(
+                box(plotOutput("plot1", height = 250)),
+                
+                box(
+                  title = "Controls",
+                  sliderInput("slider", "Number of observations:", 1, 100, 50)
+                )
+              )
+      ),
+      
+      # Kallisto processing page
+      tabItem(tabName = "kallisto",
+              h2("Widgets tab content")
+      ),
+      
+      # Sleuth processing page
+      tabItem(tabName = "sleuth",
+              h2("Widgets tab content")
+      ),
+      
+      # About page
+      tabItem(tabName = "about",
+              h2("Widgets tab content")
+      )
+    )
+  )
 
 ))
 
