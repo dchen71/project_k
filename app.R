@@ -67,7 +67,13 @@ body.sleuth = tabItem(tabName = "sleuth",
 # Body - About Page
 body.about = 
   tabItem(tabName = "about",
-                  h2("About")
+          h2("About"),
+          p("The versions of the apps that are used in this package are:"),
+          tags$ul(
+            tags$li(code("shiny: 0.13.2")),
+            tags$li(code("kallisto: 0.43.0")),
+            tags$li(code("sleuth: 0.28.1"))
+          )
 )
 
 
