@@ -79,7 +79,7 @@ body.kal =
           numericInput("numBoot", "Number of bootstraps", 0, min = 0, max = NA, step = 1, width = NULL),
           tags$h4("Select the seed for bootstrap sampling", class="help-header"),
           helpText("Seed for the bootstrap sampling (default: 42)"),
-          numericInput("numSeed", "Select seed for bootstrapping", 0, min = NA, max = NA, step = 1, width = NULL),
+          numericInput("numSeed", "Select seed for bootstrapping", 42, min = NA, max = NA, step = 1, width = NULL),
           tags$h4("Output as text instead of HDF5?", class="help-header"),
           helpText("Output plaintext instead of HDF5"),
           radioButtons("textOut", "Output plaintext(yes or no)?",
@@ -160,6 +160,7 @@ body.main = dashboardBody(
     body.sleuth,
     body.about
   ),
+  #Load custom css
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   )
