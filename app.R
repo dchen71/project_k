@@ -118,7 +118,7 @@ body.kal =
           tags$h4("Number of threads to use?", class="help-header"),
           helpText("Number of threads to use (default: 1)"),
           numericInput("numThread", "Number of threads", 0, min = NA, max = NA, step = 1, width = NULL),
-          submitButton("Pseudo-align")
+          tags$button(id="processKal", type="button", class="btn btn-success", "Pseudo-align")
           
           
           
