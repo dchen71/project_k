@@ -5,9 +5,12 @@ source("scripts/directoryInput.R")
 library(rhandsontable)
 library(sleuth)
 library(shinydashboard)
+library(shinyjs)
 
 # Define server logic
 server = (function(input, output, session) {
+  #use a reactive to show still processing on kallisto page
+  
   
 })
 
@@ -53,14 +56,14 @@ body.kal =
   tabItem(tabName = "kallisto",
           h1("Kallisto Processing"),
           h2("Pseduo-align reads using Kallisto"),
-          p("For more details about Kallisto, look up the following publication:"),
+          p("Use this tool to pseudo-align RNA-seq data for further downstream analysis"),
+          p("At this time, this tool does not support single cell RNA-seq. Look into the command line command",
+            code('kallisto pseudo'), "for more details on how to process single cell RNA-seq."),
+          p("For more details about Kallisto and pseudo-alignment, look up the following publication:"),
           code("Nicolas L Bray, Harold Pimentel, Páll Melsted and Lior Pachter, ", 
                a("Near-optimal probabilistic 
                RNA-seq quantification", href="http://www.nature.com/nbt/journal/v34/n5/full/nbt.3519.html"),
                ", Nature Biotechnology 34, 525–527 (2016), doi:10.1038/nbt.3519"),
-          p("Use this tool to pseudo-align RNA-seq data for further downstream analysis"),
-          p("At this time, this tool does not support single cell RNA-seq. Look into the command line command",
-            code('kallisto pseudo'), "for more details on how to process single cell RNA-seq."),
           h3("1. Please select the index:"),
           helpText("Filename for the kallisto index to be used for quantification"),
           h3("2. Please select samples"),
@@ -118,7 +121,11 @@ body.kal =
           tags$h4("Number of threads to use?", class="help-header"),
           helpText("Number of threads to use (default: 1)"),
           numericInput("numThread", "Number of threads", 0, min = NA, max = NA, step = 1, width = NULL),
-          tags$button(id="processKal", type="button", class="btn btn-success", "Pseudo-align")
+          
+          helpText("This can take a while depending on your hardware"),
+          tags$button(id="processKal", type="button", class="btn btn-success btn-kallisto", "Pseudo-align"),
+          br(),
+          tags$img(src="spinner.gif", id="spinner-kal")
           
           
           
@@ -154,6 +161,7 @@ body.about =
 
 # Main Body for dashboard
 body.main = dashboardBody(
+  useShinyjs(),
   tabItems(
     body.home,
     body.kal,
