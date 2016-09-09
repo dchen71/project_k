@@ -1,0 +1,8 @@
+/* Has help block not spaced between h4 and help block */
+.help-header {
+	margin-bottom: 0px;
+}
+
+.help-header + .help-block {
+	margin-top: 0px;
+}
