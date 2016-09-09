@@ -61,14 +61,32 @@ body.kal =
           p("For more details about Kallisto, look up the following publication:"),
           code("Nicolas L Bray, Harold Pimentel, Páll Melsted and Lior Pachter, Near-optimal probabilistic 
                RNA-seq quantification, Nature Biotechnology 34, 525–527 (2016), doi:10.1038/nbt.3519"),
+          p("Use this tool to pseudo-align RNA-seq data for further downstream analysis"),
           h4("1. Please select the index:"),
+          helpText("Filename for the kallisto index to be used for quantification"),
           h4("2. Are the reads paired end?"),
           radioButtons("paired", "Paired(yes or no)?",
                        inline = TRUE,
                        selected = "yes",
                        c("Yes" = "yes",
                          "No" = "no")),
-          h4("Please select samples")
+          h4("3. Please select samples"),
+          h4("4. Select output directory"),
+          helpText("Directory to write output to"),
+          h4("5. Select optional parameters"),
+          helpText("Perform sequence based bias correction"),
+          helpText("Number of bootstrap samples (default: 0)"),
+          helpText("Seed for the bootstrap sampling (default: 42)"),
+          helpText("Output plaintext instead of HDF5"),
+          helpText("Quantify single-end reads"),
+          helpText("Strand specific reads, first read forward"),
+          helpText("Strand specific reads, first read reverse"),
+          helpText("Estimated average fragment length"),
+          helpText("Estimated standard deviation of fragment length
+                   (default: value is estimated from the input data)"),
+          helpText("Number of threads to use (default: 1)"),
+          helpText("Output pseudoalignments in SAM format to stdout")
+          
           
           
           #system2("kallisto",args)
