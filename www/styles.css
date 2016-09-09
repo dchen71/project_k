@@ -1,8 +1,18 @@
-/* Has help block not spaced between h4 and help block */
-.help-header {
+/* Help block has less spacing between header elements and help content */
+h3.help-header {
 	margin-bottom: 0px;
 }
 
-.help-header + .help-block {
+h4.help-header {
+	margin-bottom: 0px;
+	font-weight: bold;
+}
+
+h4.help-header + .help-block {
 	margin-top: 0px;
+}
+
+/* Loading spinner for kallisto submit */
+#spinner-kal {
+	margin-top: 20px;
 }

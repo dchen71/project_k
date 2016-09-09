@@ -9,6 +9,8 @@ library(shinyjs)
 
 # Define server logic
 server = (function(input, output, session) {
+  hide(id="spinner-kal")
+  
   #use a reactive to show still processing on kallisto page
   
   
@@ -64,12 +66,12 @@ body.kal =
                a("Near-optimal probabilistic 
                RNA-seq quantification", href="http://www.nature.com/nbt/journal/v34/n5/full/nbt.3519.html"),
                ", Nature Biotechnology 34, 525–527 (2016), doi:10.1038/nbt.3519"),
-          h3("1. Please select the index:"),
+          tags$h3("1. Please select the index:", class="help-header"),
           helpText("Filename for the kallisto index to be used for quantification"),
-          h3("2. Please select samples"),
-          h3("3. Select output directory"),
+          tags$h3("2. Please select samples", class="help-header"),
+          tags$h3("3. Select output directory", class="help-header"),
           helpText("Directory to write output to"),
-          h3("4. Select optional parameters"),
+          tags$h3("4. Select optional parameters", class="help-header"),
           tags$h4("Peform Bias correction?", class="help-header"),
           helpText("Perform sequence based bias correction"),
           radioButtons("biasCor", "Bias Correction(yes or no)?",
