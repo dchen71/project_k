@@ -56,18 +56,28 @@ body.home =
 # Body - Kallisto Page
 body.kal = 
   tabItem(tabName = "kallisto",
-                   h2("Kallisto Processing")
+          h1("Kallisto Processing"),
+          h4("Please select the index:"),
+          h4("Are the reads paired end?"),
+          checkboxInput("paired", "Paired?", FALSE),
+          h4("Please select samples")
 )
 
 # Body - Sleuth Page
 body.sleuth = tabItem(tabName = "sleuth",
-                      h2("Sleuth Processing")
+                      h1("Sleuth Processing"),
+                      sidebarLayout(
+                        sidebarPanel(h3("test")),
+                        mainPanel(h3("test"))
+                      )
 )
 
 # Body - About Page
 body.about = 
   tabItem(tabName = "about",
-          h2("About"),
+          h1("About"),
+          p("The purpose of this app is to provide a helpful GUI for pseudo-alignment via Kallisto, and processing 
+            of the reads to be ready for use in Sleuth."),
           p("The versions of the apps that are used in this package are:"),
           tags$ul(
             tags$li(code("shiny: 0.13.2")),
