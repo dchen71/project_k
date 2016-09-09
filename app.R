@@ -44,12 +44,7 @@ sidebar = dashboardSidebar(
 body.home = 
   tabItem(tabName = "home",
           fluidRow(
-            box(plotOutput("plot1", height = 250)),
-            
-            box(
-              title = "Controls",
-              sliderInput("slider", "Number of observations:", 1, 100, 50)
-            )
+
           )
   )
 
@@ -72,8 +67,16 @@ body.kal =
           h3("3. Select output directory"),
           helpText("Directory to write output to"),
           h3("4. Select optional parameters"),
+          h4("Peform Bias correction?"),
           helpText("Perform sequence based bias correction"),
+          radioButtons("biasCor", "Bias Correction(yes or no)?",
+                       inline = TRUE,
+                       selected = "no",
+                       c("Yes" = "yes",
+                         "No" = "no")),
+          h4("Select number of bootstraps"),
           helpText("Number of bootstrap samples (default: 0)"),
+          numericInput("numBoot", "Number of bootstraps", 0, min = 0, max = NA, step = 1, width = NULL),
           helpText("Seed for the bootstrap sampling (default: 42)"),
           helpText("Output plaintext instead of HDF5"),
           h4("Are the reads paired end?"),
