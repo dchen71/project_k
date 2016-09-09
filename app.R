@@ -57,10 +57,21 @@ body.home =
 body.kal = 
   tabItem(tabName = "kallisto",
           h1("Kallisto Processing"),
-          h4("Please select the index:"),
-          h4("Are the reads paired end?"),
-          checkboxInput("paired", "Paired?", FALSE),
+          h3("Pseduo-align reads using Kallisto"),
+          p("For more details about Kallisto, look up the following publication:"),
+          code("Nicolas L Bray, Harold Pimentel, Páll Melsted and Lior Pachter, Near-optimal probabilistic 
+               RNA-seq quantification, Nature Biotechnology 34, 525–527 (2016), doi:10.1038/nbt.3519"),
+          h4("1. Please select the index:"),
+          h4("2. Are the reads paired end?"),
+          radioButtons("paired", "Paired(yes or no)?",
+                       inline = TRUE,
+                       selected = "yes",
+                       c("Yes" = "yes",
+                         "No" = "no")),
           h4("Please select samples")
+          
+          
+          #system2("kallisto",args)
 )
 
 # Body - Sleuth Page
