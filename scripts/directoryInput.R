@@ -103,8 +103,9 @@ directoryInput = function(inputId, label, value = NULL) {
       class = 'form-group directory-input-container',
       shiny:::`%AND%`(label, tags$label(label)),
       div(
+        class = 'col-xs-12 col-md-12',
         span(
-          class = 'col-xs-9 col-md-11',
+          class = 'col-xs-11 col-md-11',
           style = 'padding-left: 0; padding-right: 5px;',
           div(
             class = 'input-group shiny-input-container',
@@ -123,7 +124,7 @@ directoryInput = function(inputId, label, value = NULL) {
           class = 'shiny-input-container',
           tags$button(
             id = inputId,
-            class = 'btn btn-default directory-input',
+            class = 'btn btn-default directory-input col-md-1 col-xs-1',
             '...'
           )
         )
