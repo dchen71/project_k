@@ -19,6 +19,10 @@ server = (function(input, output, session) {
   
   #Code for Sleuth processing part
   
+  #####
+  ##### Sleuth processing
+  #####
+  
   ##Setup biomart
   mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL",
                            dataset = "mmusculus_gene_ensembl",
@@ -30,9 +34,6 @@ server = (function(input, output, session) {
   t2g <- dplyr::rename(t2g, target_id = ensembl_transcript_id,
                        ens_gene = ensembl_gene_id, ext_gene = external_gene_name)
   
-  #####
-  ##### Sleuth processing
-  #####
   
   # Init hiding of loading element
   hide("loading-1")
@@ -56,6 +57,11 @@ server = (function(input, output, session) {
         
         # update the widget value
         updateDirectoryInput(session, 'directory', value = path)
+        
+        if(is.na(path)){
+          #If cancel, then don't run the rest
+          return(FALSE)
+        }
         
         output$inputVariables <- renderRHandsontable({
           folders = dir(readDirectoryInput(session, 'directory'))
@@ -116,7 +122,6 @@ server = (function(input, output, session) {
     show(id="loading-1")
     
     folders = dir(readDirectoryInput(session, 'directory'))
-    #Can add validation here to make sure that the output folder in each sample is present
     kal_dirs <- sapply(folders, function(id) file.path(readDirectoryInput(session, 'directory'), id, "output"))
     
     s2c = hot_to_r(input$inputVariables)
@@ -128,23 +133,51 @@ server = (function(input, output, session) {
     variable_names = hot_to_r(input$nameVar)
     variable_names = variable_names$'Variable Names'
     
-    #Transcript or gene level
-    if(input$levelAnalysis == "trans"){
-      so <- sleuth_prep(s2c, as.formula((paste("~",paste(variable_names,collapse="+")))) , target_mapping = t2g)
-    } else if(input$levelAnalysis == "gene"){
-      so <- sleuth_prep(s2c, as.formula((paste("~",paste(variable_names,collapse="+")))) , target_mapping = t2g,
-                        aggregation_column = 'ens_gene')
+    #Check to make sure there are at least 2 factors in each col
+    num_factors = TRUE
+    for(i in variable_names){
+      if(length(levels(as.factor(s2c[,i]))) < 2){
+        num_factors = FALSE
+        break
+      }
     }
     
-    #Wald or likelihood test
-    if(input$typeTest == "lrt"){
+    #Validate level of factors to be at least 2
+    if(num_factors == FALSE){
+      hide(id="loading-1")
+      output$createModel = renderText({return("Error: One or more variables has less than two factors")})
+      return(FALSE)
+    }
+    
+    #Validate unique variable names
+    if(length(unique(variable_names)) != length(variable_names)){
+      hide(id="loading-1")
+      output$createModel = renderText({return("Error: Variable names are not unique")})
+      return(FALSE) 
+    }
+    
+    if(length(grep("abundance.h5", dir(s2c$path))) == nrow(s2c)){
+      #Transcript or gene level
+      if(input$levelAnalysis == "trans"){
+        so <- sleuth_prep(s2c, as.formula((paste("~",paste(variable_names,collapse="+")))) , target_mapping = t2g)
+      } else if(input$levelAnalysis == "gene"){
+        so <- sleuth_prep(s2c, as.formula((paste("~",paste(variable_names,collapse="+")))) , target_mapping = t2g,
+                          aggregation_column = 'ens_gene')
+      }
+      
+      #Likelihood test
       so <- sleuth_fit(so)
       so <- sleuth_fit(so, ~1, 'reduced')
       so <<- sleuth_lrt(so, 'reduced', 'full')
-    } 
+      
+      output$createModel = renderText({return("")})
+      output$modelCreated = renderText({return("Model created")}) #Lazy validation
+    } else {
+      output$createModel = renderText({return("Error: One or more directories does not contain Kallisto reads")})
+    }
     
     hide(id="loading-1")
-    output$createModel = renderText({return("Model created")})
+    
     
   })
   
@@ -323,7 +356,7 @@ body.sleuth = tabItem(tabName = "sleuth",
                                                      "5" = 5), selected = 1),
                           helpText("Select the number of condition variables to use"),
                           rHandsontableOutput("nameVar"),
-                          helpText("Enter the names of the condition variables. Note that the names: path and sample, are reserved names for Sleuth.")
+                          helpText("Enter unique names for the condition variables. Note that the names: path and sample, are reserved names for Sleuth.")
                         ),
                         mainPanel(
                           fluidRow(
@@ -333,8 +366,7 @@ body.sleuth = tabItem(tabName = "sleuth",
                               h3(textOutput("inputHeader")),
                               rHandsontableOutput("inputVariables"),
                               helpText(textOutput("inputHelper")),
-                              #Error with not showing until actual directory has been shown
-                              conditionalPanel(condition = "(input.directory) > 0",
+                              conditionalPanel(condition = "(output.inputVariables)",
                                                selectInput("levelAnalysis", label = h3("Select level of analysis"), 
                                                            choices = list("Transcript" = "trans", "Gene" = "gene"), selected = "trans"),
                                                selectInput("typeTest", label = h3("Select test"), 
@@ -355,7 +387,10 @@ body.sleuth = tabItem(tabName = "sleuth",
                                                helpText("Create model based on parameters for further examination via Sleuth"),
                                                tags$img(src="spinner.gif", id="loading-1"),
                                                textOutput("createModel"),
-                                               br(),
+                                               textOutput("modelCreated"),
+                                               br()
+                                                                ),
+                              conditionalPanel(condition = "(output.modelCreated)",
                                                actionButton("saveSleuth", "Save Sleuth Object"),
                                                br(),
                                                helpText("Save the object for future usage in current working directory"),
@@ -380,12 +415,11 @@ body.sleuth = tabItem(tabName = "sleuth",
                                                tags$img(src="spinner.gif", id="loading-5"),
                                                textOutput("completeWald"),
                                                br()
-                                                                )
+                              )
                                                )
                               )
                             )
-                      )
- 
+                          ) 
 )
 
 # Body - About Page
