@@ -13,12 +13,33 @@ server = (function(input, output, session) {
   hide(id="spinner-kal")
   
   #use a reactive to show still processing on kallisto page
-  #system2("kallisto",args)
   
-  #Code for Kallisto part
+  ####
+  #### Kallisto Indexing
+  ####
   
-  #Code for Sleuth processing part
+  #Create index event
+  observeEvent(input$createIndex, {
+    system2("kallisto", args=c("index", 
+                               paste("-i", input$indexOutput, ".idx"),
+                               paste("-k", input$kmerLength),
+                               input$rawTrans))
+  })
   
+  ####
+  #### Kallisto pseudo-alignment
+  ####
+  
+  #Create index event
+  observeEvent(input$processKal, {
+    system2("kallisto", args=c("quant", 
+                               paste("-i", input$kalIndex),
+                               "-o 3609/output",
+                               "-b 100",
+                               "3609_WTT.bam.fastq_sorted_1.fq",
+                               "3609_WTT.bam.fastq_sorted_2.fq"))
+  })
+
   #####
   ##### Sleuth processing
   #####
@@ -274,13 +295,14 @@ body.kal =
                        "http://bio.math.berkeley.edu/kallisto/transcriptomes/"),
                      tags$h3("1. Please select the the transcriptome file:", class="help-header"),
                      helpText("Select the file containing the transcriptome file that you are interested in indexing"),
-                     fileInput('transFastq', label = 'Select transcriptome file(.fastq)'),
+                     fileInput('rawTrans', label = 'Select transcriptome file'),
                      tags$h3("2. Please select kmer length:", class="help-header"),
                      helpText("Select the length of the kmer. Read the following wikipedia page for more details about kmers:"),
                      helpText(a(href="https://en.wikipedia.org/wiki/K-mer", "https://en.wikipedia.org/wiki/K-mer")),
-                     numericInput("kmerLength", "Select kmer length(default 31)", 31, min = 0, max = NA, step = 1, width = NULL),
+                     helpText("Kmer length must be between 3 and 31 and must be odd"),
+                     numericInput("kmerLength", "Select kmer length(default 31)", 31, min = 3, max = 31, step = 2, width = NULL),
                      tags$h3("3. Input name of the output file:", class="help-header"),
-                     textInput("transcriptName", "Enter the name of the output index file:", value="transcript"),
+                     textInput("indexOutput", "Enter the name of the output index file:", value="index"),
                      tags$button(id="createIndex", type="button", class="btn btn-success btn-kallisto", "Index Transcripts")
                      ),
             tabPanel("Pseudo-align",
@@ -405,7 +427,7 @@ body.sleuth = tabItem(tabName = "sleuth",
                                                textOutput("createModel"),
                                                textOutput("modelCreated"),
                                                br()
-                                                                ),
+                                              ),
                               conditionalPanel(condition = "(output.modelCreated)",
                                                actionButton("saveSleuth", "Save Sleuth Object"),
                                                br(),
@@ -431,8 +453,8 @@ body.sleuth = tabItem(tabName = "sleuth",
                                                tags$img(src="spinner.gif", id="loading-5"),
                                                textOutput("completeWald"),
                                                br()
-                              )
-                                               )
+                                              )
+                                      )
                               )
                             )
                           ) 
@@ -442,10 +464,11 @@ body.sleuth = tabItem(tabName = "sleuth",
 body.about = 
   tabItem(tabName = "about",
           h1("About"),
-          p("The purpose of this app is to provide a helpful GUI for pseudo-alignment via Kallisto, and processing 
+          p("The purpose of this app is to provide a helpful GUI for the Kallisto/Sleuth RNA-seq workflow. 
+            This includes the index creation and pseudo-alignment via Kallisto, as well as processing 
             of the reads to be ready for use in Sleuth."),
           p("As it currently stands, this program will only work locally on Mac OS and Linux due to it running
-            native file directory selection input."),
+            native file directory selection input as well as system level calls."),
           p("The versions of the apps that are used in this package are:"),
           tags$ul(
             tags$li(code("shiny: 0.13.2")),
