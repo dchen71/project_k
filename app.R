@@ -267,10 +267,21 @@ body.kal =
           tabsetPanel(
             tabPanel("Build Index", 
                      h2("Build Index from Transcriptome"),
-                     h4("Build a Kallisto Index from transcriptome for pseudo-alignment"),
+                     h4("Build a Kallisto Index from transcriptome for pseudo-alignment. 
+                        This will create the index in the same folder as the transcriptome files."),
                      h5("Commonly used transcriptome files can be found in the following link:"),
                      a(href="http://bio.math.berkeley.edu/kallisto/transcriptomes/", 
-                       "http://bio.math.berkeley.edu/kallisto/transcriptomes/")
+                       "http://bio.math.berkeley.edu/kallisto/transcriptomes/"),
+                     tags$h3("1. Please select the the transcriptome file:", class="help-header"),
+                     helpText("Select the file containing the transcriptome file that you are interested in indexing"),
+                     fileInput('transFastq', label = 'Select transcriptome file(.fastq)'),
+                     tags$h3("2. Please select kmer length:", class="help-header"),
+                     helpText("Select the length of the kmer. Read the following wikipedia page for more details about kmers:"),
+                     helpText(a(href="https://en.wikipedia.org/wiki/K-mer", "https://en.wikipedia.org/wiki/K-mer")),
+                     numericInput("kmerLength", "Select kmer length(default 31)", 31, min = 0, max = NA, step = 1, width = NULL),
+                     tags$h3("3. Input name of the output file:", class="help-header"),
+                     textInput("transcriptName", "Enter the name of the output index file:", value="transcript"),
+                     tags$button(id="createIndex", type="button", class="btn btn-success btn-kallisto", "Index Transcripts")
                      ),
             tabPanel("Pseudo-align",
                      h2("Pseudo-align reads"),
